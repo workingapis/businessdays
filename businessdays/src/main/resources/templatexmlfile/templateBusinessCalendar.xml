@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BusinessCalendarConfig>
+	<pivotDate>2015-01-01</pivotDate>
+	<businessDays>
+		<businessDay>Monday</businessDay>
+		<businessDay>Tuesday</businessDay>
+		<businessDay>Wednesday</businessDay>
+		<businessDay>Thursday</businessDay>
+		<businessDay>Friday</businessDay>
+	</businessDays>
+	<businessHours startHourMinute="08:00" 	endHourMinute="17:00" />
+	<holidays>
+	</holidays>
+</BusinessCalendarConfig>
