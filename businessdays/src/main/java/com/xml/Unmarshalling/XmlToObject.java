@@ -7,7 +7,11 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.log4j.Logger;
+
 public class XmlToObject {
+	
+	private static Logger logger =  Logger.getLogger(XmlToObject.class);
 	
 	@SuppressWarnings("unchecked")
 	public static <T>T getConfigurationObject(String configPath , Class<?> theClass){
@@ -29,8 +33,8 @@ public class XmlToObject {
 			return result;
 			
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			logger.error("error while unmarshling for " +"["+ theClass +"]"+ e.getMessage());
+			throw new RuntimeException(e.getMessage());
 		}
-		return null;
 	}
 }

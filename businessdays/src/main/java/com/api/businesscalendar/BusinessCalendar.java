@@ -7,14 +7,15 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.function.Predicate;
 
-
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
-
 import javax.xml.datatype.XMLGregorianCalendar;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 import com.configurations.businessCalendarConfig.BusinessCalendarConfig;
 import com.readfile.properties.ReadProperties;
@@ -22,7 +23,16 @@ import com.xml.Unmarshalling.XmlToObject;
 import com.xml.validator.XMLValidation;
 
 public final class BusinessCalendar {
-
+    
+	private static Logger logger =  Logger.getLogger(BusinessCalendar.class);
+	
+	static {
+		// configure properties file with application
+    	PropertyConfigurator.configure("src/main/resources/properties/log4j.properties");
+    	logger.info("configure log4j propertis file with application place at  " + "src/main/resources/properties/log4j.properties");
+	}
+	
+	
 	private  BusinessCalendarConfig _businessCalendarConfig;
 	private LocalDate _pivotDate;
 	private ArrayList<LocalDate> _holidaysSet = new ArrayList<LocalDate>();
@@ -34,16 +44,19 @@ public final class BusinessCalendar {
 	BusinessCalendar(String xmlConfigFilePath) throws IOException {
 		try {	
 			
+			logger.info("read XSD file paths from properties file Properties property placed at  " + "src/main/resources/properties/paths.properties");
 			// read paths from properties file Properties property
 	        Properties  property = ReadProperties.readProperties("src/main/resources/properties/paths.properties");
 	        
 	    	final String shemaFile = property.getProperty("schemaFile");
 	    	
+	    	logger.info("validate XML file with XSD");
 			// validate XML file with XSD
 	    	boolean validate = XMLValidation.validate(xmlConfigFilePath , shemaFile);
 	    	
 	    	// Load XML configuration file 
 			if(validate) { 
+				logger.info("creating business calendar for further calculations");
 				_businessCalendarConfig = XmlToObject.getConfigurationObject(xmlConfigFilePath,BusinessCalendarConfig.class); 
 			}
 						
@@ -76,7 +89,8 @@ public final class BusinessCalendar {
 			   					.until(LocalTime.parse(_businessCalendarConfig.getBusinessHours().getStartHourMinute(), formatter), ChronoUnit.SECONDS);
 			
 		} catch (RuntimeException e) {
-			// Something went wrong when reading configuration file logger.error("Error when reading file [" + configFilePath +"] : " + e.getMessage());
+			// Something went wrong when reading configuration file 
+			logger.error("Error when reading file [" + xmlConfigFilePath +"] : " + e.getMessage());
 			throw(e);
 		} 		
 	}
@@ -160,7 +174,7 @@ public final class BusinessCalendar {
     	   }catch(IllegalArgumentException  e) {    		   
     		   // Should only occurs if end Date is before/equals start Date
     		   // It means pivot Date is not compatible with the data set!    		   
-    		   //  logger.error("Date provided [" + endDate.toString() + "] is before/equal start date [" + startDate.toString() + "] : " + e.getMessage());
+    		   logger.error("Date provided [" + endDate.toString() + "] is before/equal start date [" + startDate.toString() + "] : " + e.getMessage());
     		   throw e;
     	   }
 	    }

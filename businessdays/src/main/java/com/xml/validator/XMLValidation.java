@@ -12,7 +12,12 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.apache.log4j.Logger;
+
 public class XMLValidation {
+	
+	private static Logger logger =  Logger.getLogger(XMLValidation.class);
+	
 	public static boolean validate(String xmlFile, String schemaFile) {
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         try {
@@ -21,15 +26,14 @@ public class XMLValidation {
             validator.validate(new StreamSource(new File(getResource(xmlFile))));
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+        	logger.error("error while validating xml file with xsd "+ e.getMessage());
+        	throw new RuntimeException(e.getMessage());
         }
     }
 
     private static String getResource(final String filename) throws FileNotFoundException, MalformedURLException {
         URL resource = new File(filename).toURL();
         Objects.requireNonNull(resource);
-
         return resource.getFile();
     }
 }
